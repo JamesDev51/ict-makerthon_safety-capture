@@ -2,7 +2,7 @@
 aws rekognition create-project --project-name "ict_makerthon" --region "ap-northeast-2"
 
 #데이터셋 생성 및 학습 시작
-aws rekognition create-project-version --project-arn "arn:aws:rekognition:ap-northeast-2:037212726184:project/ict_makerthon/1684759782400" --version-name "230522-1" --output-config "{ \"S3Bucket\": \"custom-labels-console-ap-northeast-2-0d6a663a62\", \"S3KeyPrefix\": \"results/\" }" --training-data "{ \"Assets\": [ { \"GroundTruthManifest\": { \"S3Object\": { \"Bucket\": \"custom-labels-console-ap-northeast-2-0d6a663a62\", \"Name\": \"datasets/ict_makerthon_training_dataset/manifests/outputs/output.manifest\" } } } ] }" --testing-data "{ \"AutoCreate\": true }" --region "ap-northeast-2"
+aws rekognition create-project-version --project-arn "arn:aws:rekognition:ap-northeast-2:037212726184:project/ict_makerthon/1684759782400" --version-name "230530-1" --output-config "{ \"S3Bucket\": \"custom-labels-console-ap-northeast-2-0d6a663a62\", \"S3KeyPrefix\": \"results/\" }" --training-data "{ \"Assets\": [ { \"GroundTruthManifest\": { \"S3Object\": { \"Bucket\": \"custom-labels-console-ap-northeast-2-0d6a663a62\", \"Name\": \"datasets/ict_makerthon_training_dataset/manifests/outputs/output_230530.manifest\" } } } ] }" --testing-data "{ \"AutoCreate\": true }" --region "ap-northeast-2"
 
 #학습 상태 확인
 aws rekognition describe-project-versions --project-arn "arn:aws:rekognition:ap-northeast-2:037212726184:project/ict_makerthon/1684759782400"
