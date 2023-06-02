@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <style>
+        .card {
+            height: 60vh; /* Adjust as needed */
+        }
+        .card-img-top {
+            height: 100%;
+            object-fit: cover; /* This will make sure the image covers the card */
+        }
+    </style>
+    
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="#">안전포착</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav">
+            <li class="nav-item active">
+              <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Features</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Pricing</a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+      
+    <div class="container">
+        <h1 class="my-3">Image Dashboard</h1>
+        <div id="image-container" class="row">
+            <div class="col-12 my-2">
+                <div class="card">
+                    <img src="${imageUrl}" class="card-img-top img-fluid">
+                    <div class="card-body">
+                        <p class="card-text">New Image</p>
+                    </div>
+                </div>
+                
+            </div>
+
+            <div class="col-12 my-2">
+                <div class="card">
+                    <img src="${imageUrl}" class="card-img-top img-fluid">
+                    <div class="card-body">
+                        <p class="card-text">New Image</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Images will be appended here by JavaScript -->
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.bundle.min.js"></script>
+    <script src="app.js"></script> <!-- The JavaScript file -->
+</body>
+<script>
+    function fetchImages() {
+        $.ajax({
+            url: "https://your-api-endpoint", // Replace with your API endpoint
+            type: "GET",
+            success: function(data) {
+                // Assuming the API returns an array of image URLs
+                data.forEach(function(imageUrl) {
+                    // Create a new card with the image and prepend it to the image container
+                    var card = `
+                        <div class="col-12 my-2">
+                            <div class="card">
+                                <img src="${imageUrl}" class="card-img-top img-fluid">
+                                <div class="card-body">
+                                    <p class="card-text">New Image</p>
+                                </div>
+                            </div>
+                        </div>`;
+                    $('#image-container').prepend(card);
+                });
+            },
+            error: function(error) {
+                console.error("Error:", error);
+            }
+        });
+    }
+
+    // Fetch images every 10 seconds
+    setInterval(fetchImages, 10000);
+
+
+
+</script>
+</html>
