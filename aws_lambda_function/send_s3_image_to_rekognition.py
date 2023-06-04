@@ -8,11 +8,11 @@ load_dotenv()
 def send_s3_image_to_rekognition(s3_bucket,s3_key):
     # Rekognition 클라이언트 생성
     SERVICE='rekognition'
-    AWS_REGION=os.getenv("AWS_REGION")
+    AWS_REGION_CUSTOM=os.getenv("AWS_REGION_CUSTOM")
     REKOGNITION_MODEL=os.getenv("REKOGNITION_MODEL")
-    REKOGNITION_MIN_CONFIDENCE=os.getenv("REKOGNITION_MIN_CONFIDENCE")
+    REKOGNITION_MIN_CONFIDENCE=int(os.getenv("REKOGNITION_MIN_CONFIDENCE"))
     
-    rekognition = boto3.client(SERVICE, region_name=aws_region)
+    rekognition = boto3.client(SERVICE, region_name=AWS_REGION_CUSTOM)
     
     # Rekognition의 detect_custom_labels API 호출
     response = rekognition.detect_custom_labels(
@@ -32,3 +32,12 @@ def send_s3_image_to_rekognition(s3_bucket,s3_key):
         print(label['Name'] + ' : ' + str(label['Confidence']))
 
     return response
+
+def main():
+    for i in range(10,26):
+        print(f"test {i}")
+        send_s3_image_to_rekognition("custom-labels-console-ap-northeast-2-0d6a663a62",f"esp32_cam_images/test{i}.jpg")
+        print()
+
+if __name__=="__main__":
+    main()

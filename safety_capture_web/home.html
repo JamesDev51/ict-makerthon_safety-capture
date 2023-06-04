@@ -25,39 +25,22 @@
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav">
             <li class="nav-item active">
-              <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+              <a class="nav-link" href="#">대시보드<span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#">Features</a>
+              <a class="nav-link" href="#">임대 가격표</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#">Pricing</a>
+              <a class="nav-link" href="#">제휴 문의</a>
             </li>
           </ul>
         </div>
       </nav>
       
     <div class="container">
-        <h1 class="my-3">Image Dashboard</h1>
+        <h1 class="my-3">실시간 현장은?</h1>
         <div id="image-container" class="row">
-            <div class="col-12 my-2">
-                <div class="card">
-                    <img src="${imageUrl}" class="card-img-top img-fluid">
-                    <div class="card-body">
-                        <p class="card-text">New Image</p>
-                    </div>
-                </div>
-                
-            </div>
-
-            <div class="col-12 my-2">
-                <div class="card">
-                    <img src="${imageUrl}" class="card-img-top img-fluid">
-                    <div class="card-body">
-                        <p class="card-text">New Image</p>
-                    </div>
-                </div>
-            </div>
+            
 
             <!-- Images will be appended here by JavaScript -->
         </div>
@@ -69,12 +52,18 @@
 <script>
     function fetchImages() {
         $.ajax({
-            url: "https://your-api-endpoint", // Replace with your API endpoint
+            url: "https://d34g240c9aiw4e.cloudfront.net/get_sqs_s3_image_urls", // Replace with your API endpoint
             type: "GET",
-            success: function(data) {
+            success: function(raw_data) {
                 // Assuming the API returns an array of image URLs
+                console.log(`rawdata : ${raw_data}`)
+                
+                var data = JSON.parse(raw_data)
+                console.log(`parsed data : ${data}`)
+                
                 data.forEach(function(imageUrl) {
                     // Create a new card with the image and prepend it to the image container
+                    console.log(`imageUrl : ${imageUrl}`)
                     var card = `
                         <div class="col-12 my-2">
                             <div class="card">

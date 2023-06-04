@@ -1,3 +1,7 @@
 {
-    "sketch": "arduino_esp32_cam.ino"
+    "sketch": "ictmakerthon.ino",
+    "configuration": "CPUFreq=240,FlashMode=qio,FlashFreq=80",
+    "board": "esp32:esp32:esp32cam",
+    "port": "COM7",
+    "output": "./arduino_output"
 }
