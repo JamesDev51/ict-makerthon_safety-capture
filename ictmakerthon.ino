@@ -7,8 +7,8 @@
 
 
 // Wi-Fi 설정
-const char* ssid = "U+Net3959";
-const char* password = "85994913A!";
+const char* ssid = "safecapture";
+const char* password = "aaaabbbb";
 
 // 서버 주소 설정
 String serverName = "4tgbkg4v4a.execute-api.ap-northeast-2.amazonaws.com";
@@ -229,7 +229,7 @@ String sendPhotoToModel(String jsonBody){
     client.println();
     client.print(jsonBody);
 
-    int timoutTimer = 10000;
+    int timoutTimer = 7000;
     long startTimer = millis();
     boolean state = false;
         while ((startTimer + timoutTimer) > millis()) {

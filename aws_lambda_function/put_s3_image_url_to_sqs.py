@@ -12,7 +12,7 @@ def put_s3_image_url_to_sqs(s3_link):
     #SQS Queue에 메시지 전송하기
     response = sqs.send_message(
         QueueUrl=SQS_QUEUE_URL,
-        DelaySeconds=10,
+        DelaySeconds=0,
         MessageAttributes={
             'S3Link': {
                 'DataType': 'String',

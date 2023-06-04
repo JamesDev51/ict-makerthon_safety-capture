@@ -32,7 +32,8 @@ def lambda_handler(event, context):
     
     no_helmet_cnt=0
     
-    if 'CustomLables' in model_response:
+    if 'CustomLabels' in model_response:
+        print("label 분석")
         # 감지된 레이블 출력
         for label in model_response['CustomLabels']:
             name=label['Name']
@@ -49,13 +50,12 @@ def lambda_handler(event, context):
     put_s3_image_url_to_sqs(visualized_image_s3_url) 
     
     # no_helmet_cnt가 0보다 크면 텔레그램 메시지 발송
+    print(f"no_helmet_cnt : {no_helmet_cnt}")
     if no_helmet_cnt:
         telegram_message=f'''
             안전모 미착용 근무자 적발되었습니다. \n
             사진을 확인하시려면 다음 링크를 클릭해주세요. \n\n
-            
-            사진 확인하기 📸 : 
-            {visualized_image_s3_url}
+            사진 확인하기 📸 : {visualized_image_s3_url}
         '''
         print(f"telegram message : {telegram_message}")
         send_telegram_message(telegram_message)
@@ -95,27 +95,37 @@ def send_telegram_message(message):
     TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
     TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
 
-    bot = Bot(token=TELEGRAM_BOT_TOKEN)
-
+    telegram_bot = Bot(token=TELEGRAM_BOT_TOKEN)
+    
     async def send_message():
-        await bot.send_message(chat_id=TELEGRAM_CHAT_ID, text=message)
-
+        await telegram_bot.send_message(chat_id=TELEGRAM_CHAT_ID, text=message)
     # Create a new event loop
     loop = asyncio.get_event_loop()
-
-    try:
-        # Run the async function
-        loop.run_until_complete(send_message())
-    finally:
-        # Close the loop
-        loop.close()
-
+    
+    retry_count = 1
+    while(retry_count<=3):
+        try:
+            loop.run_until_complete(send_message())
+            print("Sent TELEGRAM successfully")
+            return True
+        except Exception as e:
+            print("TELEGRAM SEND FAILED ")
+            print(f"try count is {_retry_count}/3")
+            retry_count += 1
+            time.sleep(3)
+            if retry_count==4:
+                print(e)
+                print("CONNECTION FAILED, ALL THREE ATTEMPTS FAILED.")
+            continue
+    loop.close()
+    
 def put_s3_image_url_to_sqs(s3_link):
 
     #SQS Queue에 메시지 전송하기
     response = sqs.send_message(
         QueueUrl=SQS_QUEUE_URL,
-        DelaySeconds=10,
+        DelaySeconds=0,
+        MessageGroupId='visualized-image',
         MessageAttributes={
             'S3Link': {
                 'DataType': 'String',
@@ -123,7 +133,7 @@ def put_s3_image_url_to_sqs(s3_link):
             }
         },
         MessageBody=(
-            '안전포착 S3 URL 전송'
+            s3_link
         )
     )
 
@@ -208,8 +218,11 @@ def visualize_bounding_boxes(S3_BUCKET, S3_KEY, bb_labels):
         # output_image를 메모리 상에 임시 파일로 저장
         output_image.save(temp_file)
 
-    print("temp file : ")
-    print(temp_file)
+    if os.path.exists(temp_file):
+        print("temp 파일 정상 생성됨")
+    else:
+        print("temp 파일 안 만들어짐")
+
     # 그려진 이미지 업로드        
     NEW_S3_KEY = f"visualize_bb_{S3_KEY}"
     upload_image_to_s3(NEW_S3_KEY, temp_file)
@@ -217,5 +230,5 @@ def visualize_bounding_boxes(S3_BUCKET, S3_KEY, bb_labels):
     #다 쓴 이미지 삭제
     os.remove(temp_file)
     
-    visualized_image_s3_url=f"https://{S3_BUCKET}/{NEW_S3_KEY}"
+    visualized_image_s3_url=f"https://{S3_BUCKET}.s3.ap-northeast-2.amazonaws.com/{NEW_S3_KEY}"
     return visualized_image_s3_url

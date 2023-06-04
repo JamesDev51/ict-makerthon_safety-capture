@@ -23,14 +23,15 @@ def lambda_handler(event, context):
                 'All'
             ],
             MaxNumberOfMessages=10,  
-            VisibilityTimeout=0,
+            VisibilityTimeout=30,
             WaitTimeSeconds=0
         )
 
         if 'Messages' in messages:  #Messages가 있을 때까지 받아오기
             for message in messages['Messages']: 
-                message_body = json.loads(message['Body'])
-                s3_url = message_body['S3Url']['StringValue']
+                print("message : ",message)
+                s3_url = message['Body']
+                print("s3 url : " , s3_url)
                 s3_urls.append(s3_url)
 
                 #큐에서 메시지 지우기
